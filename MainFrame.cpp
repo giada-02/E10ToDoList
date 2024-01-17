@@ -21,7 +21,7 @@ void MainFrame::createControls() {
                                     wxPoint(8, 22), wxSize(800, -1), wxALIGN_CENTER_HORIZONTAL);
     headlineText->SetFont(headlineFont);
 
-    inputField = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(100, 80), wxSize(495, 35));
+    inputField = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(100, 80), wxSize(495, 35), wxTE_PROCESS_ENTER);
     addButton = new wxButton(panel, wxID_ANY, "Add", wxPoint(600, 80), wxSize(100, 35));
     checkListBox = new wxCheckListBox(panel, wxID_ANY, wxPoint(100, 120), wxSize(600, 400));
     removeButton = new wxButton(panel, wxID_ANY, "Remove", wxPoint(100, 525), wxSize(100, 35));
@@ -30,11 +30,21 @@ void MainFrame::createControls() {
 
 void MainFrame::bindEventHandlers() {
     addButton->Bind(wxEVT_BUTTON, &MainFrame::onAddButtonClicked, this);
+    inputField->Bind(wxEVT_TEXT_ENTER, &MainFrame::onInputEnter, this);
     removeButton->Bind(wxEVT_BUTTON, &MainFrame::onRemoveButtonClicked, this);
+    checkListBox->Bind(wxEVT_KEY_DOWN, &MainFrame::onKeyCanc, this);
     clearButton->Bind(wxEVT_BUTTON, &MainFrame::onClearButtonClicked, this);
 }
 
 void MainFrame::onAddButtonClicked(wxCommandEvent &evt) {
+    addTaskFromInput();
+}
+
+void MainFrame::onInputEnter(wxCommandEvent &evt) {
+    addTaskFromInput();
+}
+
+void MainFrame::addTaskFromInput() {
     wxString description = inputField->GetValue();
     if (!description.empty()) {
         checkListBox->Insert(description, checkListBox->GetCount());
@@ -44,6 +54,16 @@ void MainFrame::onAddButtonClicked(wxCommandEvent &evt) {
 }
 
 void MainFrame::onRemoveButtonClicked(wxCommandEvent &evt) {
+    deleteSelectedTask();
+}
+
+void MainFrame::onKeyCanc(wxKeyEvent &evt) {
+    if (evt.GetKeyCode() == WXK_DELETE) {
+        deleteSelectedTask();
+    }
+}
+
+void MainFrame::deleteSelectedTask() {
     int selectedIndex = checkListBox->GetSelection();
     if (selectedIndex != wxNOT_FOUND) {
         checkListBox->Delete(selectedIndex);

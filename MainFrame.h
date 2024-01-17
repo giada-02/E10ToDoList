@@ -21,12 +21,17 @@ private:
     wxButton *clearButton;
 
     void createControls();
-
     void bindEventHandlers();
 
+    //add task
     void onAddButtonClicked(wxCommandEvent &evt);
+    void onInputEnter(wxCommandEvent &evt); //key 'Enter' to add task
+    void addTaskFromInput();
 
+    //remove selected task
     void onRemoveButtonClicked(wxCommandEvent &evt);
+    void onKeyCanc(wxKeyEvent &evt); //key 'Canc' to remove selected task
+    void deleteSelectedTask();
 
     void onClearButtonClicked(wxCommandEvent &evt);
 
