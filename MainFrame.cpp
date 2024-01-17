@@ -7,6 +7,7 @@
 MainFrame::MainFrame(const wxString &title) : wxFrame(nullptr, wxID_ANY, title) {
     createControls();
     bindEventHandlers();
+    addSavedTasks();
 }
 
 void MainFrame::createControls() {
@@ -34,6 +35,7 @@ void MainFrame::bindEventHandlers() {
     removeButton->Bind(wxEVT_BUTTON, &MainFrame::onRemoveButtonClicked, this);
     checkListBox->Bind(wxEVT_KEY_DOWN, &MainFrame::onKeyCanc, this);
     clearButton->Bind(wxEVT_BUTTON, &MainFrame::onClearButtonClicked, this);
+    this->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::onWindowClosed, this);
 }
 
 void MainFrame::onAddButtonClicked(wxCommandEvent &evt) {
@@ -77,5 +79,30 @@ void MainFrame::onClearButtonClicked(wxCommandEvent &evt) {
         if (result == wxID_YES) {
             checkListBox->Clear();
         }
+    }
+}
+
+void MainFrame::onWindowClosed(wxCloseEvent &evt) {
+    std::vector<Task> tasks;
+
+    for(int i = 0; i < checkListBox->GetCount(); i++){
+        std::string description = (checkListBox->GetString(i)).ToStdString();
+        std::replace(description.begin(), description.end(), ' ', '_');
+        Task task(description, checkListBox->IsChecked(i));
+        tasks.push_back(task);
+    }
+
+    saveTasksToFile(tasks, "tasks.txt");
+    evt.Skip();
+}
+
+void MainFrame::addSavedTasks() {
+    std::vector<Task> tasks = loadTasksFromFile("tasks.txt");
+    for(const auto& task: tasks){
+        int index = checkListBox->GetCount();
+        wxString description(task.getDescription());
+        std::replace(description.begin(), description.end(), '_', ' ');
+        checkListBox->Insert(description, index);
+        checkListBox->Check(index, task.isDone());
     }
 }

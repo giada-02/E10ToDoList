@@ -6,6 +6,10 @@
 #define E10TODOLIST_MAINFRAME_H
 
 #include <wx/wx.h>
+#include <string>
+#include <vector>
+
+#include "Task.h"
 
 class MainFrame : public wxFrame {
 public:
@@ -22,6 +26,8 @@ private:
 
     void createControls();
     void bindEventHandlers();
+    //when window opens tasks are loaded from file
+    void addSavedTasks(); //in constructor
 
     //add task
     void onAddButtonClicked(wxCommandEvent &evt);
@@ -33,7 +39,11 @@ private:
     void onKeyCanc(wxKeyEvent &evt); //key 'Canc' to remove selected task
     void deleteSelectedTask();
 
+    //clear all tasks
     void onClearButtonClicked(wxCommandEvent &evt);
+
+    //when window closes tasks are saved to file
+    void onWindowClosed(wxCloseEvent& evt);
 
 };
 
