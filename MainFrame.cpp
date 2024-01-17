@@ -6,6 +6,7 @@
 
 MainFrame::MainFrame(const wxString &title) : wxFrame(nullptr, wxID_ANY, title) {
     createControls();
+    bindEventHandlers();
 }
 
 void MainFrame::createControls() {
@@ -25,5 +26,36 @@ void MainFrame::createControls() {
     checkListBox = new wxCheckListBox(panel, wxID_ANY, wxPoint(100, 120), wxSize(600, 400));
     removeButton = new wxButton(panel, wxID_ANY, "Remove", wxPoint(100, 525), wxSize(100, 35));
     clearButton = new wxButton(panel, wxID_ANY, "Clear", wxPoint(600, 525), wxSize(100, 35));
+}
 
+void MainFrame::bindEventHandlers() {
+    addButton->Bind(wxEVT_BUTTON, &MainFrame::onAddButtonClicked, this);
+    removeButton->Bind(wxEVT_BUTTON, &MainFrame::onRemoveButtonClicked, this);
+    clearButton->Bind(wxEVT_BUTTON, &MainFrame::onClearButtonClicked, this);
+}
+
+void MainFrame::onAddButtonClicked(wxCommandEvent &evt) {
+    wxString description = inputField->GetValue();
+    if (!description.empty()) {
+        checkListBox->Insert(description, checkListBox->GetCount());
+        inputField->Clear();
+    }
+    inputField->SetFocus();
+}
+
+void MainFrame::onRemoveButtonClicked(wxCommandEvent &evt) {
+    int selectedIndex = checkListBox->GetSelection();
+    if (selectedIndex != wxNOT_FOUND) {
+        checkListBox->Delete(selectedIndex);
+    }
+}
+
+void MainFrame::onClearButtonClicked(wxCommandEvent &evt) {
+    if (!checkListBox->IsEmpty()) {
+        wxMessageDialog dialog(this, "Are you sure you want to clear all tasks?", "Clear", wxYES_NO | wxCANCEL);
+        int result = dialog.ShowModal();
+        if (result == wxID_YES) {
+            checkListBox->Clear();
+        }
+    }
 }

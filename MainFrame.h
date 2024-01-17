@@ -21,6 +21,15 @@ private:
     wxButton *clearButton;
 
     void createControls();
+
+    void bindEventHandlers();
+
+    void onAddButtonClicked(wxCommandEvent &evt);
+
+    void onRemoveButtonClicked(wxCommandEvent &evt);
+
+    void onClearButtonClicked(wxCommandEvent &evt);
+
 };
 
 
