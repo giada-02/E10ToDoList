@@ -12,7 +12,15 @@ public:
     MainFrame(const wxString &title);
 
 private:
+    wxPanel *panel;
+    wxStaticText *headlineText;
+    wxTextCtrl *inputField;
+    wxButton *addButton;
+    wxCheckListBox *checkListBox;
+    wxButton *removeButton;
+    wxButton *clearButton;
 
+    void createControls();
 };
 
 
